@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-fileupload-1.2.1.jar" sourcepath="sources-jar/commons-fileupload-1.2.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://commons.apache.org/fileupload/apidocs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-io-1.4.jar" sourcepath="sources-jar/commons-io-1.4-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://commons.apache.org/io/api-release"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-httpclient-3.1.jar" sourcepath="sources-jar/commons-httpclient-3.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://hc.apache.org/httpclient-3.x/apidocs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-logging-1.1.1.jar" sourcepath="sources-jar/commons-logging-1.1.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://commons.apache.org/logging/commons-logging-1.1.1/apidocs"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-codec-1.3.jar" sourcepath="sources-jar/commons-codec-1.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://commons.apache.org/codec/api-release"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>

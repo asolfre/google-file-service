@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+    <display-name>Google File Service</display-name>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+    
+    <!-- Servlet mapping -->
+    <servlet>
+        <servlet-name>upload</servlet-name>
+        <servlet-class>sinica.googlefileservice.server.servlet.FileUploadServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>upload</servlet-name>
+        <url-pattern>/upload</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>download</servlet-name>
+        <servlet-class>sinica.googlefileservice.server.servlet.FileDownloadServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>download</servlet-name>
+        <url-pattern>/download</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>manage</servlet-name>
+        <servlet-class>sinica.googlefileservice.server.servlet.FileManagerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>manage</servlet-name>
+        <url-pattern>/admin/manage</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>info</servlet-name>
+        <servlet-class>sinica.googlefileservice.server.servlet.InfoServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>info</servlet-name>
+        <url-pattern>/admin/info</url-pattern>
+    </servlet-mapping>
+    
+	<!-- Only allowed client IPs (see appengine-web.xml) can upload files via Commons-HttpClient API -->
+	<filter>
+		<filter-name>IPAddressFilter</filter-name>
+		<filter-class>sinica.googlefileservice.server.filter.IPAddressFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>IPAddressFilter</filter-name>
+		<url-pattern>/upload</url-pattern>
+	</filter-mapping>
+
+	<!-- To declare that HTTPS should be used for the below URLs -->
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    
+    <!-- To declare the below URL is administrator area -->
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
+</web-app>
