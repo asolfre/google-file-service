@@ -83,6 +83,7 @@ public class FileDownloadServlet extends HttpServlet {
     private String encodeFileName(String fileName, String userAgent) throws IOException {
     	//fileName="紫葉槭.jpg"
     	if (null != userAgent && -1 != userAgent.indexOf("MSIE")) {
+    		fileName = fileName.replace(" ", "_");
 			// UTF-8 URL encoding only works in IE
 			return URLEncoder.encode(fileName, "UTF-8");
 			//return "%E7%B4%AB%E8%91%89%E6%A7%AD.jpg"

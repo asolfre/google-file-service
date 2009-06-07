@@ -12,7 +12,7 @@ import sinica.googlefileservice.server.datastore.util.DatastoreUtils;
 
 /**
  * @author <a href="mailto:tytung@iis.sinica.edu.tw">Tsai-Yeh Tung</a>
- * @version 0.1
+ * @version 1.0
  */
 public class FileManagerServlet extends HttpServlet {
 	private static final long serialVersionUID = 2190879304615239209L;
@@ -24,6 +24,7 @@ public class FileManagerServlet extends HttpServlet {
 	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String resultUrl ="/file_list.jsp";
 		PrintWriter out = resp.getWriter();
 		String action = req.getParameter("action");
     	if (action != null && action.equals("delete")) {
@@ -33,17 +34,16 @@ public class FileManagerServlet extends HttpServlet {
 	    		isRemoved = DatastoreUtils.deleteGoogleFileById(fileId);
 			}
 	    	if (isRemoved)
-	    		out.print("<script>alert('FileId \""+fileId+"\" has been successfully removed.'); location.href='/index.jsp';</script>");
+	    		out.println("<script>alert('FileId \""+fileId+"\" has been successfully removed.'); location.href='"+resultUrl+"';</script>");
 	    	else
-	    		out.print("<script>alert('Remove fail.'); location.href='/index.jsp';</script>");
+	    		out.println("<script>alert('Remove fail.'); location.href='"+resultUrl+"';</script>");
     	} else {
     		String queryString = req.getQueryString();
     		if (queryString != null)
     			queryString = "?"+URLEncoder.encode(queryString, "UTF-8");
     		else
     			queryString = "";
-    		//resp.sendRedirect("/index.jsp?msg=Incorrect operation for the URL <code>"+req.getRequestURI()+queryString+"</code>");
-    		out.print("<script>alert('Incorrect operation for the URL "+req.getRequestURI()+queryString+"'); location.href='/index.jsp';</script>");
+    		out.println("<script>alert('Incorrect operation for the URL "+req.getRequestURI()+queryString+"'); location.href='"+resultUrl+"';</script>");
     	}
     	out.close();
 	}
