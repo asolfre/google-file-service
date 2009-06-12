@@ -12,7 +12,7 @@
 function load_iframe() {
 	document.getElementById('progress_frame').src='file_upload_progress.jsp';
 	document.getElementById('progress_bar').innerHTML+='...';
-	setTimeout('load_iframe()', 100); //10 seconds
+	setTimeout('load_iframe()', 10000); //10 seconds
 }
 //-->
 </script>
