@@ -1,6 +1,6 @@
 <%/* author: Tsai-Yeh Tung */%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/userService.jsp"%>
+<%@ include file="/config.jsp"%>
 <%@ page import="java.util.Date"%>
 
 <html>
@@ -10,8 +10,9 @@
 <script language="JavaScript">
 <!--
 function load_iframe() {
-	document.getElementById('progress').src='file_upload_progress.jsp';
-	setTimeout('load_iframe()', 5000); //5 seconds
+	document.getElementById('progress_frame').src='file_upload_progress.jsp';
+	document.getElementById('progress_bar').innerHTML+='...';
+	setTimeout('load_iframe()', 100); //10 seconds
 }
 //-->
 </script>
@@ -22,10 +23,7 @@ function load_iframe() {
 // Clear session used by FileUpload ProgressListener
 request.getSession().removeAttribute("progressMap");
 
-if (!userService.isUserAdmin())
-	// Never execute.
-	// The web browser will be redirected to "HTTP Error 403 (User not in required role)" sent by server  
-	// while vialoting "web.xml <security-constraint> <url-pattern>(/admin/*)"
+if (!isUserAllowedToUpload)
 	response.sendRedirect("/home.jsp");
 
 Date date = new Date();
@@ -38,7 +36,8 @@ Date date = new Date();
     <div>
     <input type="submit" name="submit" value="Upload" /></div>
   </form>
-  <iframe width="400" height="20" frameborder="0" scrolling="no" id="progress" name="progress">
+  <div id="progress_bar"></div>
+  <iframe width="400" height="20" frameborder="0" scrolling="no" id="progress_frame" name="progress_frame">
   Your web browser doesn't support "iframe", please update.</iframe>
 </body>
 </html>

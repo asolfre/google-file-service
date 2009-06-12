@@ -65,9 +65,15 @@ public class FileUploadServlet extends HttpServlet {
     	} else {
     		//via web form
         	UserService userService = UserServiceFactory.getUserService();
-        	if (userService.isUserLoggedIn())
-        		if (userService.isUserAdmin())
+        	if (userService.isUserLoggedIn()) {
+        		if ("admin".equals(System.getProperty("upload.allowed-role"))) { //see appengine-web.xml
+        			if (userService.isUserAdmin()) {
+        				isAllowedUser = true;
+        			}
+        		} else { //System.getProperty("upload.allowed-role")="user"
         			isAllowedUser = true;
+        		}
+        	}
     	}
     	// Check if allowed user or not
     	if (isAllowedUser) {
@@ -154,13 +160,13 @@ public class FileUploadServlet extends HttpServlet {
     		isFailureSubmit = true;
     	}
     	
-//		if (!isFailureSubmit) {
-//			log.info("fileId: " + fileId);
-//			log.info("fileOwner: " + fileOwner);
-//			log.info("fileName: " + fileName);
-//			log.info("fileSize: " + fileSize);
-//			log.info("ContentType: " + contentType);
-//		}
+		if (!isFailureSubmit) {
+			log.info("fileId: " + fileId);
+			log.info("fileOwner: " + fileOwner);
+			log.info("fileName: " + fileName);
+			log.info("fileSize: " + fileSize);
+			log.info("ContentType: " + contentType);
+		}
 
 		// Return result
 		String resultUrl = "/file_list.jsp";

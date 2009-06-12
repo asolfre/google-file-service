@@ -1,8 +1,8 @@
 <%/* author: Tsai-Yeh Tung */%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/userService.jsp"%>
+<%@ include file="/config.jsp"%>
 <%@ page import="java.util.List"%>
-<%@ page import="javax.jdo.PersistenceManager"%>
+<%@ page import="javax.jdo.PersistenceManager, javax.jdo.Query"%>
 <%@ page import="sinica.googlefileservice.server.datastore.GoogleFile"%>
 <%@ page import="sinica.googlefileservice.server.datastore.GoogleUnit"%>
 <%@ page import="sinica.googlefileservice.server.datastore.util.PMF"%>
@@ -21,9 +21,15 @@ if (message != null)
 	out.write("<font color=red>"+ message +"</font>");
 
 PersistenceManager pm = PMF.get().getPersistenceManager();
-String query = "select from " + GoogleFile.class.getName() + " order by date desc range 0,5";
-@SuppressWarnings("unchecked")
-List<GoogleFile> entities = (List<GoogleFile>) pm.newQuery(query).execute();
+Query query = pm.newQuery(GoogleFile.class);
+// Administrators can see all uploaded files, 
+// while other logged-in users can just see their own uploaded files.
+if (!userService.isUserAdmin()) {
+	query.setFilter("fileOwner == '"+userName+"'");
+}
+query.setOrdering("date desc");
+query.setRange(0, 5);
+List<GoogleFile> entities = (List<GoogleFile>) query.execute();
 if (entities.isEmpty()) {
 %>
 <h4>There's no uploaded files.</h4>
@@ -43,9 +49,9 @@ if (entities.isEmpty()) {
 <div>
 	FileSize: "<%=g.getFileSize()%> Bytes" 
 <%
-		if (userService.isUserAdmin()) {
+		if (isUserAllowedToUpload) {
 %>
-<a href="#" onClick="if(confirm('Are you sure?')) location.href='/admin/manage?action=delete&id=<%=g.getId()%>';">Delete</a>
+<a href="#" onClick="if(confirm('Are you sure?')) location.href='/manage?action=delete&id=<%=g.getId()%>';">Delete</a>
 <%
 		}
 %>
@@ -61,14 +67,12 @@ if (entities.isEmpty()) {
 %>
 </div>
 <%
-		if (userService.isUserAdmin()) {
-			List<GoogleUnit> googleUnits = g.getGoogleUnits();
-			for (GoogleUnit gUnit : googleUnits) {
-				Key key = gUnit.getKey();
-				Key pkey = key.getParent();
-				out.print("<br/>"+pkey.getKind()+"("+pkey.getName()+")"+"("+pkey.getId()+")/");
-				out.println(key.getKind()+"("+key.getName()+")"+"("+key.getId()+")");
-			}
+		List<GoogleUnit> googleUnits = g.getGoogleUnits();
+		for (GoogleUnit gUnit : googleUnits) {
+			Key key = gUnit.getKey();
+			Key pkey = key.getParent();
+			out.print("<br/>"+pkey.getKind()+"("+pkey.getName()+")"+"("+pkey.getId()+")/");
+			out.println(key.getKind()+"("+key.getId()+")");
 		}
 	}
 }

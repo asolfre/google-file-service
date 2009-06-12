@@ -34,7 +34,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>manage</servlet-name>
-        <url-pattern>/admin/manage</url-pattern>
+        <url-pattern>/manage</url-pattern>
     </servlet-mapping>
     
     <servlet>

@@ -8,6 +8,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+
+import sinica.googlefileservice.server.datastore.GoogleFile;
 import sinica.googlefileservice.server.datastore.util.DatastoreUtils;
 
 /**
@@ -27,23 +31,48 @@ public class FileManagerServlet extends HttpServlet {
 		String resultUrl ="/file_list.jsp";
 		PrintWriter out = resp.getWriter();
 		String action = req.getParameter("action");
-    	if (action != null && action.equals("delete")) {
-        	String fileId = req.getParameter("id");
-	    	boolean isRemoved = false;
-	    	if (DatastoreUtils.isKey(fileId)) {
-	    		isRemoved = DatastoreUtils.deleteGoogleFileById(fileId);
+		String fileId = req.getParameter("id");
+		// Check if the role that can delete files or not
+		boolean isUserAllowedToDelete = false;
+		UserService userService = UserServiceFactory.getUserService();
+    	if (userService.isUserLoggedIn()) {
+    		// Administrators can delete all files belong to any users.
+    		if (userService.isUserAdmin()) {
+    			isUserAllowedToDelete = true;
 			}
-	    	if (isRemoved)
-	    		out.println("<script>alert('FileId \""+fileId+"\" has been successfully removed.'); location.href='"+resultUrl+"';</script>");
-	    	else
-	    		out.println("<script>alert('Remove fail.'); location.href='"+resultUrl+"';</script>");
-    	} else {
-    		String queryString = req.getQueryString();
-    		if (queryString != null)
-    			queryString = "?"+URLEncoder.encode(queryString, "UTF-8");
-    		else
-    			queryString = "";
-    		out.println("<script>alert('Incorrect operation for the URL "+req.getRequestURI()+queryString+"'); location.href='"+resultUrl+"';</script>");
+    		// Users can just delete their own files.
+    		if ("user".equals(System.getProperty("upload.allowed-role"))) { //see appengine-web.xml
+    			if (DatastoreUtils.isKey(fileId)) {
+    				GoogleFile g = DatastoreUtils.getGoogleFileById(fileId);
+    				if (g != null) {
+    					String fileOwner = g.getFileOwner();
+	    				if (userService.getCurrentUser().getNickname().equals(fileOwner))
+	    					isUserAllowedToDelete = true;
+    				}
+    			}
+    		}
+    	}
+    	if (isUserAllowedToDelete) {
+	    	// Delete
+	    	if ("delete".equals(action)) {
+		    	boolean isRemoved = false;
+		    	if (DatastoreUtils.isKey(fileId)) {
+		    		isRemoved = DatastoreUtils.deleteGoogleFileById(fileId);
+				}
+		    	if (isRemoved)
+		    		out.println("<script>alert('FileId \""+fileId+"\" has been successfully removed.'); location.href='"+resultUrl+"';</script>");
+		    	else
+		    		out.println("<script>alert('Remove fail.'); location.href='"+resultUrl+"';</script>");
+	    	} else {
+	    		String queryString = req.getQueryString();
+	    		if (queryString != null)
+	    			queryString = "?"+URLEncoder.encode(queryString, "UTF-8");
+	    		else
+	    			queryString = "";
+	    		out.println("<script>alert('Incorrect operation for the URL "+req.getRequestURI()+queryString+"'); location.href='"+resultUrl+"';</script>");
+	    	}
+    	} else { // !isUserAllowedToDelete
+    		out.println("<script>alert('Permission deny.'); location.href='"+resultUrl+"';</script>");
     	}
     	out.close();
 	}

@@ -1,6 +1,6 @@
 <%/* author: Tsai-Yeh Tung */%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ include file="/userService.jsp"%>
+<%@ include file="/config.jsp"%>
 
 <html>
 <head>
@@ -44,8 +44,8 @@ td {
           <table cellpadding="3" cellspacing="0">
             <tr align="center"> 
               <td><font face="Courier New">《 Welcome <font color="#0066CC"><%=userName%></font> 》</font></td>
-              <% if (userService.isUserAdmin()) { %>
-              <td><a href="/admin/file_upload.jsp" target="main">:: File upload</a></td>
+              <% if (isUserAllowedToUpload) { %>
+              <td><a href="/file_upload.jsp" target="main">:: File upload</a></td>
               <% } %>
               <td><a href="/file_list.jsp" target="main">:: File listing</a></td>
               <% if (userService.isUserAdmin()) { %>
