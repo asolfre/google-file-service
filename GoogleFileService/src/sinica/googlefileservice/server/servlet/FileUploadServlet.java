@@ -112,6 +112,8 @@ public class FileUploadServlet extends HttpServlet {
 				        if (fileName != null)
 				        	fileName= FilenameUtils.getName(fileName);
 				        contentType = item.getContentType();
+				        if (contentType == null)
+				        	contentType = "application/octet-stream";
 				        if (fieldName.equals("upfile")) {
 				        	// Check if the fileId conforms to the Key format of the Google datastore 
 			        		// and all other uploaded fields are not empty.

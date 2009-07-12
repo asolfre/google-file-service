@@ -7,6 +7,7 @@
 <%@ page import="sinica.googlefileservice.server.datastore.GoogleUnit"%>
 <%@ page import="sinica.googlefileservice.server.datastore.util.PMF"%>
 <%@ page import="com.google.appengine.api.datastore.Key"%>
+<%@ page import="org.apache.commons.io.FileUtils"%>
 
 <html>
 <head>
@@ -28,7 +29,7 @@ if (!userService.isUserAdmin()) {
 	query.setFilter("fileOwner == '"+userName+"'");
 }
 query.setOrdering("date desc");
-query.setRange(0, 5);
+query.setRange(0, 10);
 List<GoogleFile> entities = (List<GoogleFile>) query.execute();
 if (entities.isEmpty()) {
 %>
@@ -47,7 +48,7 @@ if (entities.isEmpty()) {
 <div>FileName: "<%=g.getFileName()%>"</div>
 <div>ContentType: "<%=g.getContentType()%>"</div>
 <div>
-	FileSize: "<%=g.getFileSize()%> Bytes" 
+	FileSize: "<%=FileUtils.byteCountToDisplaySize(g.getFileSize())%>" 
 <%
 		if (isUserAllowedToUpload) {
 %>
