@@ -40,13 +40,17 @@ if (entities.isEmpty()) {
 <h4>Uploaded files are listed as follows:</h4>
 <%
 	for (GoogleFile g : entities) {
+		String contentType = g.getContentType();
+		if (contentType == null) {
+			contentType = "";
+		}
 %>
 <hr/>
 <div>Date: "<%=g.getDate()%>"</div>
 <div>FileId: "<%=g.getId()%>"</div>
 <div>FileOwner: "<%=g.getFileOwner()%>"</div>
 <div>FileName: "<%=g.getFileName()%>"</div>
-<div>ContentType: "<%=g.getContentType()%>"</div>
+<div>ContentType: "<%=contentType%>"</div>
 <div>
 	FileSize: "<%=FileUtils.byteCountToDisplaySize(g.getFileSize())%>" 
 <%
@@ -58,8 +62,6 @@ if (entities.isEmpty()) {
 %>
 <a href="/download?id=<%=g.getId()%>">Download</a>
 <%
-		String contentType = g.getContentType();
-
 		if (g.getFileSize() < 300000 && (contentType.endsWith("jpeg") || contentType.endsWith("gif") || contentType.endsWith("png"))) {
 %>	
 <img height="50" src="/download?id=<%=g.getId()%>"/>
