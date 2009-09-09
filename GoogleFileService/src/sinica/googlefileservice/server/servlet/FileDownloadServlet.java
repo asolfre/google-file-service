@@ -48,7 +48,12 @@ public class FileDownloadServlet extends HttpServlet {
 	    		// Set the ContentType as a binary file
 	    		//resp.setContentType("application/octet-stream");
 	    		// Set the ContentType from the datastore
-	    		resp.setContentType(g.getContentType());
+		    	String contentType = g.getContentType();
+		    	if (contentType == null) {
+		    		resp.setContentType("application/octet-stream");
+		    	} else {
+		    		resp.setContentType(g.getContentType());
+		    	}
 		    	
 	    		// Output
 	    		OutputStream o = resp.getOutputStream();
