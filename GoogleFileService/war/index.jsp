@@ -21,6 +21,8 @@ if (!userService.isUserLoggedIn()) {
 	response.sendRedirect("/home.jsp");
 }
 %>
-<p>For more information on GoogleFileService, please visit <a href="http://code.google.com/p/google-file-service/">project homepage</a>.</p>
+<p>For more information on GoogleFileService, please visit the <a href="http://code.google.com/p/google-file-service/">project homepage</a>.</p>
+<img src="http://code.google.com/appengine/images/appengine-silver-120x30.gif" 
+alt="Powered by Google App Engine" />
 </body>
 </html>

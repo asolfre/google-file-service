@@ -17,10 +17,14 @@ import sinica.googlefileservice.server.datastore.GoogleUnit;
 import com.google.appengine.api.datastore.Blob;
 
 /**
- * A Utility for manipulating the {@link GoogleUnit} and {@link GoogleFile} data models.
+ * A Utility for manipulating the {@link GoogleUnit} and {@link GoogleFile} data models.<br/>
+ * 
+ * 2009/11/6 Thanks Zhang Yu for fixing the bug of getGoogleFileById() to be compatible with 
+ * the latest SDK including 1.2.5, 1.2.6
  * 
  * @author <a href="mailto:tytung@iis.sinica.edu.tw">Tsai-Yeh Tung</a>
  * @version 1.0
+ * 
  */
 public class DatastoreUtils {
 	/**
@@ -73,6 +77,10 @@ public class DatastoreUtils {
     		PersistenceManager pm = PMF.get().getPersistenceManager();
     		try {
     			g = pm.getObjectById(GoogleFile.class, fileId);
+    			// another trick for Blod (fixed by Zhang Yu)
+    			for (GoogleUnit gu: g.getGoogleUnits()) {
+    				gu.getData(); //trick
+    			}
     			g.setGoogleUnits(g.getGoogleUnits()); //trick
     		} catch (JDOObjectNotFoundException e) {
 	    		//no entities in Google datastore
