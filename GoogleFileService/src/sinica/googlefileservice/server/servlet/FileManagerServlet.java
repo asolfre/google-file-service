@@ -59,6 +59,8 @@ public class FileManagerServlet extends HttpServlet {
 		    	if (DatastoreUtils.isKey(fileId)) {
 		    		isRemoved = DatastoreUtils.deleteGoogleFileById(fileId);
 				}
+		    	if (fileId.indexOf("'") > -1)
+		    		fileId = fileId.replaceAll("'", "\\\\'");
 		    	if (isRemoved)
 		    		out.println("<script>alert('FileId \""+fileId+"\" has been successfully removed.'); location.href='"+resultUrl+"';</script>");
 		    	else

@@ -1,6 +1,7 @@
 <%/* author: Tsai-Yeh Tung */%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/config.jsp"%>
+<%@ page import="java.net.URLEncoder"%>
 <%@ page import="java.util.List"%>
 <%@ page import="javax.jdo.PersistenceManager, javax.jdo.Query"%>
 <%@ page import="sinica.googlefileservice.server.datastore.GoogleFile"%>
@@ -56,7 +57,7 @@ if (entities.isEmpty()) {
 <%
 		if (isUserAllowedToUpload) {
 %>
-<a href="#" onClick="if(confirm('Are you sure?')) location.href='/manage?action=delete&id=<%=g.getId()%>';">Delete</a>
+<a href="#" onClick="if(confirm('Are you sure?')) location.href='/manage?action=delete&id=<%=URLEncoder.encode(g.getId())%>';">Delete</a>
 <%
 		}
 %>
