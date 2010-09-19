@@ -29,7 +29,7 @@ public class MyFileServiceClient {
 		
 		// The URL of the uploading Servlet entry point
 		String url = "";
-		url = "http://localhost:8080/upload";
+		url = "http://localhost:8888/upload";
 		//url = "https://gae-file-service.appspot.com/upload"; //Google App Engine
 		
 		// Create an instance of FileServiceClient for Google App Engine

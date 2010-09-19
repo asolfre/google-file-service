@@ -46,7 +46,7 @@
         <url-pattern>/admin/info</url-pattern>
     </servlet-mapping>
     
-	<!-- Only allowed client IPs (see appengine-web.xml) can upload files via Commons-HttpClient API -->
+	<!-- Only allowed client IPs (see appengine-web.xml) can upload files via Apache-HttpClient API -->
 	<filter>
 		<filter-name>IPAddressFilter</filter-name>
 		<filter-class>sinica.googlefileservice.server.filter.IPAddressFilter</filter-class>

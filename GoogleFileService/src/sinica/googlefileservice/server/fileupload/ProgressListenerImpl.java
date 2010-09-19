@@ -28,6 +28,9 @@ public class ProgressListenerImpl implements ProgressListener {
     }
 
     public void update(long bytesRead, long contentLength, int item) {
+    	if (contentLength == -1) {
+    		return;
+    	}
     	if (bytesRead == contentLength) {
 			progressMap = new HashMap<String, String>();
 			progressMap.put("percent", "100");

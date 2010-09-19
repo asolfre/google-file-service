@@ -73,7 +73,7 @@ td {
   </tr> 
   <tr> 
     <td height="20" align="center" bgcolor="#99CC66">
-      <font style="color:#999966; font-family:Courier New">Copyright&copy; 2009 T.Y.Tung, Webcollab, Institute of Information Science, Academia Sinica.</font>
+      <font style="color:#999966; font-family:Courier New">Copyright&copy; 2009-2010 T.Y.Tung, Institute of Information Science, Academia Sinica.</font>
     </td> 
   </tr> 
 </table> 

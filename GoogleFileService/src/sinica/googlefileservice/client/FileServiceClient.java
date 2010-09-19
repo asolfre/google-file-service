@@ -1,30 +1,31 @@
 package sinica.googlefileservice.client;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.multipart.ByteArrayPartSource;
-import org.apache.commons.httpclient.methods.multipart.FilePart;
-import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
-import org.apache.commons.httpclient.methods.multipart.Part;
-import org.apache.commons.httpclient.methods.multipart.StringPart;
 import org.apache.commons.io.IOUtils;
-
-import sinica.googlefileservice.server.datastore.GoogleFile;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 /**
- * A FileServiceClient for uploading one file into {@link GoogleFile}.
+ * A FileServiceClient for uploading one file into {@link GoogleDatastore}.
  * 
  * @author <a href="mailto:tytung@iis.sinica.edu.tw">Tsai-Yeh Tung</a>
  * @version 1.0
  */
 public class FileServiceClient {
-	private String url = "http://localhost.:8080/upload";
+	private String url = "http://localhost.:8888/upload";
 	private HttpClient httpClient;
-	private PostMethod postMethod;
+	private HttpPost httpPost;
 	
 	/**
 	 * Protected Constructor.
@@ -32,12 +33,11 @@ public class FileServiceClient {
 	 * @param url The URL of the uploading Servlet entry point.
 	 */
 	protected FileServiceClient(String url){
-		// Set the URL of the uploading Servlet entry point
+		// Set the URL of the uploading Servlet entry point.
 		this.url = url;
 		// Create an instance of HttpClient.
-		httpClient = new HttpClient();
-		// Timeout in milliseconds.
-		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(5000);
+		httpClient = new DefaultHttpClient();
+		//System.out.println("a FileServiceClient has been created.");
 	}
 	
 	/**
@@ -69,42 +69,57 @@ public class FileServiceClient {
 	 *         <div>or -2 if the server says that uploaded fields are empty or wrong formats, </div>
 	 *         <div>or -3 if the server says that the client isn't in allowed client IPs list, </div>
 	 *         <div>or -4 if the server doesn't return correct HTTP status code: 200 OK (HTTP/1.0 - RFC 1945), </div>
-	 *         <div>or -5 if the client connects to the server fail.</div>
+	 *         <div>or -5 if the client connects to the server fail, </div>
+	 *         <div>or -6 if the server doesn't return any data.</div>
+	 *         
+	 * @throws IOException 
 	 */
-	public int submit(String fileId, String fileOwner, String fileName, byte[] fileData, String contentType) {
+	public int submit(String fileId, String fileOwner, String fileName, byte[] fileData, String contentType) throws IOException {
 		// Create a method instance.
-		postMethod = new PostMethod(url);
+		httpPost = new HttpPost(url);
 		// Provide form data
-		Part[] parts = {
-				new StringPart("fileId", fileId), 
-				new StringPart("fileOwner", fileOwner), 
-				new FilePart("upfile", new ByteArrayPartSource(fileName, fileData), contentType, "UTF-8")
-				};
-		MultipartRequestEntity multipart = new MultipartRequestEntity(parts, postMethod.getParams());
-	    postMethod.setRequestEntity(multipart);
+		InputStream fileStream = new ByteArrayInputStream(fileData);
+		MultipartEntity multipart = new MultipartEntity();
+		multipart.addPart("fileId", new StringBody(fileId));
+		multipart.addPart("fileOwner", new StringBody(fileOwner));
+		multipart.addPart("upfile", new InputStreamBody(fileStream, contentType, fileName));
+		httpPost.setEntity(multipart);
 	    // Submit
 	    try {
 			// Execute the method.
-			int statusCode = httpClient.executeMethod(postMethod);
-			if (statusCode == HttpStatus.SC_OK) {
+			HttpResponse response = httpClient.execute(httpPost);
+			// Read the response status.
+			StatusLine statusLine = response.getStatusLine();
+			if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
 				// Read the response body.
-				InputStream stream = postMethod.getResponseBodyAsStream();
-				String responseBody = IOUtils.toString(stream);
-				// Upload success(>0)
-				// or (-1)FileUploadException, (-2)fields are empty or wrong formats, (-3)disallowed client IP
-				return Integer.parseInt(responseBody);
+				HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					// Upload success(>0)
+					// or (-1)FileUploadException, (-2)fields are empty or wrong formats, (-3)disallowed client IP
+					InputStream stream = entity.getContent();
+					String responseBody = IOUtils.toString(stream);
+					return Integer.parseInt(responseBody); //return ?
+				} else {
+					return -6; //return -6 (server problem)
+				}
 			} else {
 				// Upload fail
-				System.err.println("Method failed: " + postMethod.getStatusLine());
+				System.err.println("Error: " + statusLine);
 				return -4; //return -4 (HTTP status codes problem)
 			}
 		} catch (IOException e) {
 			// Upload fail
 			System.err.println("Fatal transport error: " + e.getMessage());
 			return -5; //return -5 (connection problem)
-		} finally {
-			// Release the connection.
-			postMethod.releaseConnection();
 		}
+	}
+	
+	/**
+	 * When HttpClient instance is no longer needed,
+	 * shut down the connection manager to ensure
+	 * immediate deallocation of all system resources
+	 */
+	public void releaseConnection() {
+        httpClient.getConnectionManager().shutdown();
 	}
 }

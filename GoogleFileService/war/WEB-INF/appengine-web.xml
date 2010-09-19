@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
 	<application>gae-file-service</application>
-	<version>3</version>
+	<version>dev</version>
 	
 	<system-properties>
 		<!-- Configure java.util.logging -->
 		<property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
-		<!-- Configure allowed client IPs that can upload files via Commons-HttpClient API -->
+		<!-- Configure allowed client IPs that can upload files via Apache-HttpClient API -->
 		<property name="upload.allowed-client-ip" value="127.0.0.1, 140.109.16.68" />
 		<!-- Configure allowed max size of the uploaded data in bytes (e.g. 10MB) -->
 		<property name="upload.allowed-maxsize" value="10240000" />

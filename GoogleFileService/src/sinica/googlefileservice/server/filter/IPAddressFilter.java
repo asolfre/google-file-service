@@ -11,7 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Only allowed client IPs (see appengine-web.xml) can upload files via Commons-HttpClient API.
+ * Only allowed client IPs (see appengine-web.xml) can upload files via Apache-HttpClient API.
  * 
  * @author <a href="mailto:tytung@iis.sinica.edu.tw">Tsai-Yeh Tung</a>
  * @version 1.0

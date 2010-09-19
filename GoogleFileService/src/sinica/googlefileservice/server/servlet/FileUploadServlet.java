@@ -42,7 +42,7 @@ public class FileUploadServlet extends HttpServlet {
 		// See appengine-web.xml
 		long maxsize = Long.parseLong(System.getProperty("upload.allowed-maxsize"));
 		
-		// Check if User-Agent is HTTP client (Jakarta Commons-HttpClient/3.1) or not
+		// Check if User-Agent is HTTP client (Apache-HttpClient/4.0.2) or not
 		boolean isHttpClient = false;
 		if (req.getHeader("User-Agent").indexOf("HttpClient") > -1)
 			isHttpClient = true;
@@ -75,6 +75,14 @@ public class FileUploadServlet extends HttpServlet {
         		}
         	}
     	}
+    	
+		// Check that we have a file upload request
+		boolean isMultipart = ServletFileUpload.isMultipartContent(req);
+		if (!isMultipart) {
+			isFailureSubmit = true;
+			isAllowedUser = false;
+		}
+		
     	// Check if allowed user or not
     	if (isAllowedUser) {
 			try {
